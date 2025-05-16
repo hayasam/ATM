@@ -20,7 +20,7 @@ jobs:
 
       # توليد ملف SBOM بصيغة CycloneDX-JSON
       - name: Generate SBOM
-        run: syft packages dir=. -o cyclonedx-json --file sbom_github.json
+        run: syft packages dir:. -o cyclonedx-json --file sbom_github.json
 
       # رفع المخرجات كـ Artifact
       - uses: actions/upload-artifact@v4
