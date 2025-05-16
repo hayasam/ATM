@@ -30,7 +30,7 @@ jobs:
         run: |
           git config --local user.email "hayasam@najah.edu"
           git config --local user.name "hayasam"
-          git add bom.json
+          git add sbom.cdx.json
           git commit -m "Add SBOM"
        
        
