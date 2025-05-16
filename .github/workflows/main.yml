@@ -12,16 +12,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # تثبيت Syft بالإصدار المحدّد
-      - name: Install Syft
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh \
-            | sh -s -- -b /usr/local/bin
-
-      # توليد ملف SBOM بصيغة CycloneDX-JSON
-      - name: Generate SBOM
-        run: syft packages dir:. -o cyclonedx-json --file sbom_github.json
-
+      - name: Generate Python SBOM
+      - uses: CycloneDX/gh-python-generate-sbom@v2
+        with:
+          input: ./requirements.txt
+          output: ./bom.json
+          format: json
       # رفع المخرجات كـ Artifact
       - uses: actions/upload-artifact@v4
         with:
