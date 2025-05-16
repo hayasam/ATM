@@ -1,5 +1,6 @@
 # REST API
 
+
 **ATM** comes with the possibility to start a server process that enables interacting with
 it via a REST API server that runs over [flask](http://flask.pocoo.org/).
 
