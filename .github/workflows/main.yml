@@ -25,5 +25,12 @@ jobs:
           name: sbom-files
           path: |
             sbom.cdx.json
-         
-         
+            
+      - name: Commit SBOM to Repository
+        run: |
+          git config --local user.email "hayasam@najah.edu"
+          git config --local user.name "hayasam"
+          git add bom.json
+          git commit -m "Add SBOM"
+       
+       
