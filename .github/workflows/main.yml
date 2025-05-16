@@ -3,12 +3,12 @@ name: Generate SBOM (Syft)
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
   sbom:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu:latest
     steps:
       - uses: actions/checkout@v4
 
