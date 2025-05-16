@@ -15,7 +15,7 @@ jobs:
       - name: Generate JSON SBOM
         uses: CycloneDX/gh-python-generate-sbom@v2
         with:
-          path: .
-          out: ./artifacts/sboms
-          json: true
+          input: ./requirements.txt
+          output: ./bom.json
+          format: json
           github-bearer-token: ${{ secrets.GITHUB_TOKEN }}
