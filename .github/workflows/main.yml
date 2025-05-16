@@ -28,10 +28,10 @@ jobs:
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
 
-      - name: Generate CycloneDX and SPDX SBOM
+      - name: Generate SBOM (CycloneDX + SPDX)
         run: |
-          syft . -o cyclonedx-json > sbom.cdx.json
-          syft . -o spdx-json > sbom.spdx.json
+          syft dir:. -o cyclonedx-json > sbom.cdx.json
+          syft dir:. -o spdx-json > sbom.spdx.json
 
       - name: Upload SBOM artifacts
         uses: actions/upload-artifact@v4
