@@ -3,7 +3,7 @@ name: Generate SBOM (Syft)
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
