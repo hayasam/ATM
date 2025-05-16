@@ -18,4 +18,12 @@ jobs:
           input: ./requirements.txt
           output: ./bom.json
           format: json
+          
+      - name: Upload SBOM files as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-files
+          path: |
+            sbom.cdx.json
+         
          
