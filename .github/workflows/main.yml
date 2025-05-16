@@ -1,29 +1,51 @@
-# .github/workflows/sbom.yml
-name: Generate SBOM (Syft)
+name: Python Build with SBOM
 
 on:
   push:
-    branches: [master]
-  workflow_dispatch:
+    branches: [ master ]
 
 jobs:
-  sbom:
-    runs-on: ubuntu-22.04
+  build:
+    name: Build and Generate SBOM
+    runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: 🛎️ Checkout repository
+        uses: actions/checkout@v3
 
-      # تثبيت Syft بالإصدار المحدّد
-      - name: Install Syft
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.8
+
+      - name: 📦 Install dependencies
         run: |
-           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install --upgrade setuptools wheel
+          pip install .
 
+      - name: ▶️ Run your project
+        run: |
+          python3 example.py || python example.py
 
-      # توليد ملف SBOM بصيغة CycloneDX-JSON
-      - name: Generate SBOM
-        run: syft dir=. -o cyclonedx-json --file sbom_github.json
+      - name: 🧾 Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
 
-      # رفع المخرجات كـ Artifact
-      - uses: actions/upload-artifact@v4
+      - name: 🧮 Generate SBOM (CycloneDX + SPDX)
+        run: |
+          syft dir:. -o cyclonedx-json > sbom.github.json
+          syft dir:. -o spdx-json > sbom.spdx.json
+
+      - name: ⬆️ Upload SBOM files as artifact
+        uses: actions/upload-artifact@v4
         with:
           name: sbom-github
-          path: sbom_github.json
+          path: |
+            sbom.github.json
+            
+
+      - name: ✅ Report success
+        if: success()
+        run: echo "✅ Build and SBOM generation successful."
