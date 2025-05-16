@@ -1,40 +1,32 @@
-name: Python Build
+name: Generate SBOM
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches: [ masetr ]
+
 
 jobs:
-  build:
-    name: Python 3.8 on Ubuntu Xenial
-    runs-on: ubuntu:latest  # Ubuntu 20.04 is closest to Xenial (16.04 is deprecated)
-
-    strategy:
-      matrix:
-        python-version: [3.8]
+  sbom:
+    name: SBOM Generation with Syft
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Generate SBOM
+        run: |
+          syft dir:. -o cyclonedx-json > sbom.cdx.json
+          syft dir:. -o spdx-json > sbom.spdx.json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
         with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install --upgrade setuptools wheel
-          pip install .
-
-      - name: Run example script
-        run: |
-          python3 example.py || python example.py
-
-      - name: Report success
-        if: success()
-        run: echo "Successful."
+          name: sbom-files
+          path: |
+            sbom.cdx.json
+            sbom.spdx.json
