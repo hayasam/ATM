@@ -1,4 +1,4 @@
-name: Python Build
+name: Python Build and SBOM
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
 
-      - name: Generate SBOM
+      - name: Generate SBOM (CycloneDX + SPDX)
         run: |
           syft dir:. -o cyclonedx-json > sbom.cdx.json
           syft dir:. -o spdx-json > sbom.spdx.json
@@ -29,9 +29,10 @@ jobs:
           path: |
             sbom.cdx.json
             sbom.spdx.json
+
   build:
-    name: Python 3.8 on Ubuntu Xenial
-    runs-on: ubuntu:latest # Ubuntu 20.04 is closest to Xenial (16.04 is deprecated)
+    name: Python 3.8 Build
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
@@ -48,17 +49,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip setuptools wheel
           pip install -r requirements.txt
-          pip install --upgrade setuptools wheel
           pip install .
 
       - name: Run example script
-        run: |
-          python3 example.py || python example.py
-
-      
+        run: python example.py
 
       - name: Report success
         if: success()
-        run: echo "Successful."
+        run: echo "Build completed successfully."
