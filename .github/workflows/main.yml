@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Python 3.8 on Ubuntu Xenial
-    runs-on: ubuntu-20.04  # Ubuntu 20.04 is closest to Xenial (16.04 is deprecated)
+    runs-on: ubuntu:latest  # Ubuntu 20.04 is closest to Xenial (16.04 is deprecated)
 
     strategy:
       matrix:
