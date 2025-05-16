@@ -15,8 +15,8 @@ jobs:
       # تثبيت Syft بالإصدار المحدّد
       - name: Install Syft
         run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh \
-            | sh -s -- -b /usr/local/bin ${SYFT_VERSION:-v0.110.0}
+           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
 
       # توليد ملف SBOM بصيغة CycloneDX-JSON
       - name: Generate SBOM
