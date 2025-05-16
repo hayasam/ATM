@@ -1,9 +1,8 @@
-name: Generate SBOM
+name: Python Build
 
 on:
   push:
-    branches: [ masetr ]
-
+    branches: [ master ]
 
 jobs:
   sbom:
@@ -30,3 +29,36 @@ jobs:
           path: |
             sbom.cdx.json
             sbom.spdx.json
+  build:
+    name: Python 3.8 on Ubuntu Xenial
+    runs-on: ubuntu:latest # Ubuntu 20.04 is closest to Xenial (16.04 is deprecated)
+
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install --upgrade setuptools wheel
+          pip install .
+
+      - name: Run example script
+        run: |
+          python3 example.py || python example.py
+
+      
+
+      - name: Report success
+        if: success()
+        run: echo "Successful."
