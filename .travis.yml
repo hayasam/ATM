@@ -1,36 +1,21 @@
+
 language: python
-matrix:
-  # let's start simple:
-  include:
-  - name: "Python 3.7 on Xenial Linux"
-    dist: xenial        # required for Python >= 3.7
-    env: PYTHON_VERSION="3.7"  DASK_ML_VERSION="1.0.0"
-    before_install:
-      - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-  - name: "Python 3.7 on Xenial Linux with coverage"
-    dist: xenial        # required for Python >= 3.7
-    env: PYTHON_VERSION="3.7"  COVERAGE="true"  DASK_ML_VERSION="1.0.0"
-    before_install:
-      - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
+python:
+  - "3.8"
 
+branches:
+  only:
+    - main
 
-# language: python
-# python:
-#   - "3.8"
+install:
+  - pip install cyclonedx-bom
 
-# branches:
-#   only:
-#     - main
+script:
+  - cyclonedx-py -i requirements.txt -o sbom.cdx.json
 
-# install:
-#   - pip install cyclonedx-bom
-
-# script:
-#   - cyclonedx-py -i requirements.txt -o sbom.cdx.json
-
-# after_success:
-#   - git config --local user.email "hayasam@najah.edu"
-#   - git config --local user.name "hayasam"
-#   - git add sbom.cdx.json
-#   - git commit -m "Add SBOM [ci skip]" || echo "No changes to commit"
-#   - git push "https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git" HEAD:master
+after_success:
+  - git config --local user.email "hayasam@najah.edu"
+  - git config --local user.name "hayasam"
+  - git add sbom.cdx.json
+  - git commit -m "Add SBOM [ci skip]" || echo "No changes to commit"
+  - git push "https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git" HEAD:master
