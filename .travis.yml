@@ -5,7 +5,7 @@ python:
 
 branches:
   only:
-    - main
+    - master
 
 install:
   - pip install cyclonedx-bom
