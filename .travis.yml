@@ -1,20 +1,20 @@
 language: python
-jobs:
-  include:
-    - name: "Python 3.8 on Xenial linux"
-      python: 3.8
-      os: linux
-      dist: xenial
-      arch: amd64
-    
-      env: PATH=/c/Python37:/c/Python37/Scripts:$PATH # command to install dependencies
+python:
+  - "3.8"
+
+branches:
+  only:
+    - master
+
 install:
-  - pip3 install --upgrade pip
-  - pip3 install -r requirements.txt
-  - pip3 install --upgrade setuptools wheel   # for some projects upgrading setuptools are needed
-  - pip3 install .
+  - pip install cyclonedx-bom
+
 script:
-  - travis_wait 80 python3 example.py || travis_wait 80 python example.py  # running the example script.
+  - cyclonedx-py -i requirements.txt -o sbom.cdx.json
 
 after_success:
-  - echo "Successfull."
+  - git config --local user.email "hayasam@najah.edu"
+  - git config --local user.name "hayasam"
+  - git add sbom.cdx.json
+  - git commit -m "Add SBOM [ci skip]" || echo "No changes to commit"
+  - git push "https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git" HEAD:master
