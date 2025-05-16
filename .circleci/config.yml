@@ -1,9 +1,38 @@
-version: 2
-jobs:
-  build:
-    working_directory: ~/atm
+version: 2.1
+
+executors:
+  python-executor:
     docker:
-      - image: themattrix/tox
+      - image: cimg/python:3.11
+    working_directory: ~/repo
+
+jobs:
+  generate-sbom:
+    executor: python-executor
     steps:
       - checkout
-      - run: tox
+
+      - run:
+          name: Install CycloneDX tool
+          command: |
+            pip install cyclonedx-bom
+
+      - run:
+          name: Generate SBOM (CycloneDX JSON)
+          command: |
+            cyclonedx-py -i requirements.txt -o sbom.cdx.json
+
+      - run:
+          name: Commit and Push SBOM file
+          command: |
+            git config --local user.email "hayasam@najah.edu"
+            git config --local user.name "hayasam"
+            git add sbom.cdx.json
+            git commit -m "Add SBOM [ci skip]" || echo "No changes to commit"
+            git push https://${GITHUB_TOKEN}@github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}.git HEAD:main
+
+workflows:
+  version: 2
+  sbom-workflow:
+    jobs:
+      - generate-sbom
