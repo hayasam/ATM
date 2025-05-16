@@ -18,4 +18,4 @@ jobs:
           input: ./requirements.txt
           output: ./bom.json
           format: json
-          github-bearer-token: ${{ secrets.GITHUB_TOKEN }}
+         
